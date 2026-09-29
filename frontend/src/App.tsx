@@ -198,7 +198,7 @@ export function App() {
       case 'data-center':
         return <AdminPanel />;
       case 'settings':
-        return <SettingsPanel />;
+        return <SettingsPanel theme={theme} setTheme={setTheme} />;
       case 'api':
       case 'apis':
       case 'weather-apis':
