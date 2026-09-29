@@ -123,6 +123,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+import threading
+def keep_alive_ping():
+    # If running on Render, RENDER_EXTERNAL_URL is available
+    render_url = os.getenv("RENDER_EXTERNAL_URL")
+    if not render_url:
+        return
+    while True:
+        try:
+            time.sleep(10 * 60) # Ping every 10 minutes
+            requests.get(f"{render_url}/health", timeout=10)
+            print("Keep-alive ping sent successfully.")
+        except Exception as e:
+            print(f"Keep-alive ping failed: {e}")
+
+@app.on_event("startup")
+def startup_event():
+    thread = threading.Thread(target=keep_alive_ping, daemon=True)
+    thread.start()
+
+
 OWM_KEY = os.getenv("OWM_KEY")
 MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
 
