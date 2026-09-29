@@ -27,7 +27,7 @@ pinned: false
 |---|---|---|---|
 | **Vercel** | https://wheather-sih.vercel.app/ | React 19 + Vite Frontend | ✅ Live |
 | **Render** | https://stormtrace-backend.onrender.com/ | FastAPI + PyTorch Backend Engine | ✅ Live |
-| **GitHub Pages** | https://alokzhan.github.io/wheatherSIH/ | Secondary Static Host | ✅ Live |
+
 
 ---
 
