@@ -27,7 +27,10 @@ def compute_efi_1d(forecast_values, climatology_values):
     
     F_p = np.array([np.sum(fcst_sorted <= q) / n_fcst for q in q_values])
     integrand = (F_p - p_values) / np.sqrt(p_values * (1.0 - p_values))
-    efi = (2.0 / np.pi) * integrate.trapezoid(integrand, p_values)
+    try:
+        efi = (2.0 / np.pi) * integrate.trapezoid(integrand, p_values)
+    except AttributeError:
+        efi = (2.0 / np.pi) * integrate.trapz(integrand, p_values)
     
     return float(np.clip(efi, -1.0, 1.0))
 
