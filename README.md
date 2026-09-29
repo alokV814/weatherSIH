@@ -10,23 +10,24 @@ pinned: false
 
 *Automated Extreme Weather Anomaly Tracking and Hyperlocal Impact Downscaling*
 
+[![Vercel Frontend](https://img.shields.io/badge/Vercel-Frontend_Live-black?logo=vercel)](https://wheather-sih.vercel.app/)
+[![Render Backend](https://img.shields.io/badge/Render-Backend_Live-46E3B7?logo=render)](https://stormtrace-backend.onrender.com/)
 [![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Live-brightgreen?logo=github)](https://alokzhan.github.io/wheatherSIH/)
-[![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?logo=vercel)](https://weather-sih.vercel.app/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.2.1-EE4C2C?logo=pytorch)](https://pytorch.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110.0-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![React 19](https://img.shields.io/badge/React-19.0-61DAFB?logo=react)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-8.3-646CFF?logo=vite)](https://vite.dev/)
 [![Leaflet](https://img.shields.io/badge/Leaflet-GIS_Maps-199900?logo=leaflet)](https://leafletjs.com/)
-[![Mobile](https://img.shields.io/badge/Mobile-Responsive-blue?logo=android)](https://alokzhan.github.io/wheatherSIH/)
 
 ---
 
 ## 🚀 Live Deployments
 
-| Platform | URL | Status |
-|---|---|---|
-| **GitHub Pages** | https://alokzhan.github.io/wheatherSIH/ | ✅ Live |
-| **Vercel** | https://weather-sih.vercel.app/ | ✅ Live |
+| Platform | URL | Role | Status |
+|---|---|---|---|
+| **Vercel** | https://wheather-sih.vercel.app/ | React 19 + Vite Frontend | ✅ Live |
+| **Render** | https://stormtrace-backend.onrender.com/ | FastAPI + PyTorch Backend Engine | ✅ Live |
+| **GitHub Pages** | https://alokzhan.github.io/wheatherSIH/ | Secondary Static Host | ✅ Live |
 
 ---
 
@@ -425,12 +426,11 @@ pip install -r backend/requirements.txt
 uvicorn backend.api.main:app --reload --port 8000
 ```
 
-### 3. Run PyTorch & Test Suites (10/10 Passed)
-```bash
-python -m pytest backend/tests/test_suite.py tests/test_gnn_smoke.py -v
-```
+### 3. Production Deployment Architecture
+- **Vercel Frontend**: Deployed live at [`https://wheather-sih.vercel.app/`](https://wheather-sih.vercel.app/). Automatically proxies API calls (`/api/*`) via Vercel rewrites directly to the Render backend.
+- **Render Backend**: Deployed live at [`https://stormtrace-backend.onrender.com/`](https://stormtrace-backend.onrender.com/). Features automated keep-alive ping, SQLite DB persistence, PyTorch models, and SciPy EFI calculation engine.
 
-### 4. Build & Deploy to GitHub Pages
+### 4. Build & Deploy Commands
 ```bash
 # Production Bundle Build
 npm run build
@@ -443,7 +443,7 @@ npm run deploy
 | Variable | Description | Default |
 |---|---|---|
 | `VITE_MAPBOX_TOKEN` | Mapbox public token for premium map tiles | CartoDB/ESRI free tiles used as fallback |
-| `VITE_API_URL` | Backend API base URL | Auto-detected from localStorage |
+| `VITE_API_URL` | Backend API base URL | Auto-detected from Vercel rewrite or localStorage |
 
 ---
 
@@ -457,8 +457,8 @@ npm run deploy
 | **Backend** | FastAPI 0.110, Uvicorn, SQLite |
 | **ML Models** | PyTorch 2.2.1, SciPy, NumPy |
 | **Live Data** | Open-Meteo API, RainViewer Radar, Copernicus ERA5 |
-| **Deployment** | GitHub Pages (`gh-pages`), Vercel (serverless Python) |
-| **CI/CD** | GitHub Actions (`JamesIves/github-pages-deploy-action@v4`) |
+| **Deployment** | Vercel (Frontend UI), Render (24/7 FastAPI Backend), GitHub Pages |
+| **CI/CD** | GitHub Actions (`deploy.yml`) |
 
 ---
 
