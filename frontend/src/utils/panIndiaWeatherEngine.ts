@@ -186,7 +186,7 @@ export async function fetchLiveOpenMeteoRisk(searchQuery: string): Promise<Locat
 export async function getPanIndiaLocationRisk(searchQuery: string): Promise<LocationRiskData> {
   // 1. Try backend endpoint first if available
   try {
-    const res = await fetch(`/api/v1/weather/risk?q=${encodeURIComponent(searchQuery)}`);
+    const res = await fetch(`/api/v1/location-risk?q=${encodeURIComponent(searchQuery)}`);
     const contentType = res.headers.get('content-type') || '';
     if (res.ok && contentType.includes('application/json')) {
       const json = await res.json();
