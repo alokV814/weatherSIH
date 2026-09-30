@@ -89,7 +89,7 @@ export async function fetchLiveOpenMeteoRisk(searchQuery: string): Promise<Locat
 
     const { lat, lng, displayName, district, state, pinCode } = geo;
     const [weatherRes, liveOwm] = await Promise.all([
-      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=precipitation_sum,precipitation_probability_max,temperature_2m_max,wind_speed_10m_max&hourly=precipitation,precipitation_probability&timezone=Asia/Kolkata&forecast_days=7`),
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=precipitation_sum,precipitation_probability_max,temperature_2m_max,wind_speed_10m_max&hourly=precipitation,precipitation_probability,temperature_2m,relative_humidity_2m,wind_speed_10m&current_weather=true&timezone=Asia/Kolkata&forecast_days=7`),
       fetchOpenWeatherMapLive(lat, lng)
     ]);
 
@@ -137,6 +137,7 @@ export async function fetchLiveOpenMeteoRisk(searchQuery: string): Promise<Locat
     const hourlyTimes: string[] = weather.hourly?.time || [];
     const hourlyRains: number[] = weather.hourly?.precipitation || [];
     const hourlyProbs: number[] = weather.hourly?.precipitation_probability || [];
+    const hourlyHums: number[] = weather.hourly?.relative_humidity_2m || [];
     
     const hourlyProbabilities = [];
     const nowHourIndex = new Date().getHours();
@@ -153,6 +154,20 @@ export async function fetchLiveOpenMeteoRisk(searchQuery: string): Promise<Locat
         rainMm: itemRain,
       });
     }
+
+    const currentTemp = weather.current_weather?.temperature ?? Math.round(weather.daily?.temperature_2m_max?.[0] ?? 25);
+    const currentWind = weather.current_weather?.windspeed ?? Math.round(weather.daily?.wind_speed_10m_max?.[0] ?? 10);
+    const currentHumidity = hourlyHums[nowHourIndex] ?? 60;
+
+    const fallbackLiveWeather = {
+      tempC: Math.round(currentTemp),
+      humidity: currentHumidity,
+      pressureMb: 1012,
+      windSpeedKmh: Math.round(currentWind * 10) / 10,
+      description: rain24 > 35 ? 'Heavy Rain' : (rain24 > 5 ? 'Light Rain' : 'Clear Sky'),
+      icon: '01d',
+      source: 'Open-Meteo Live API',
+    };
 
     const publicAdv = rain24 > 35
       ? `EXTREME WEATHER RED ALERT: ${rain24} mm 24h rainfall forecasted over ${district} (${state}). High risk of flash floods and waterlogging.`
@@ -182,7 +197,7 @@ export async function fetchLiveOpenMeteoRisk(searchQuery: string): Promise<Locat
       hourlyProbabilities,
       nearestThreatDistanceKm: rain24 === 0 ? 25.0 : Math.round((2.0 + (lat % 3)) * 10) / 10,
       nearestThreatName: rain24 > 0 ? `LIVE-METEO-${district.toUpperCase().replace(/[^A-Z0-9]/g, '-')}-CELL` : 'No Active Threat Cell',
-      liveWeather: liveOwm || undefined,
+      liveWeather: liveOwm || fallbackLiveWeather,
       safetyAdvisory: {
         public: publicAdv,
         farmer: farmerAdv,

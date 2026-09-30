@@ -859,6 +859,13 @@ def get_location_risk(q: str = Query(..., description="Location name query")):
                 "regionId": "all",
                 "currentRiskLevel": risk_level,
                 "riskScore": score,
+                "liveWeather": {
+                    "tempC": round(live_temp),
+                    "humidity": live_humidity,
+                    "windSpeedKmh": live_wind,
+                    "description": live_description,
+                    "source": "Open-Meteo & OpenWeatherMap Live Telemetry"
+                },
                 "forecast24h": {"rainMm": live_rain_24h, "prob": live_prob_24h, "risk": risk_level},
                 "forecast48h": {"rainMm": live_rain_48h, "prob": live_prob_48h, "risk": "severe" if live_rain_48h > 75 else ("moderate" if live_rain_48h > 25 else "low")},
                 "forecast72h": {"rainMm": live_rain_72h, "prob": live_prob_72h, "risk": "moderate" if live_rain_72h > 25 else "low"},
