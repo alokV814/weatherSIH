@@ -1716,9 +1716,9 @@ export const LiveRiskMap: React.FC<LiveRiskMapProps> = ({ selectedRegion = 'all'
           ))}
         </div>
 
-        <div className="hidden lg:flex items-center gap-2 text-[11px] text-slate-500 shrink-0">
-          <RefreshCw className="h-3.5 w-3.5 text-cyan-400 animate-spin" style={{ animationDuration: '4s' }} />
-          <span>Pan-India NCUM Ensemble Cycle Active</span>
+        <div className="hidden lg:flex items-center gap-2 text-[11px] text-slate-400 shrink-0">
+          <RefreshCw className={`h-3.5 w-3.5 text-cyan-400 ${isSyncing ? 'animate-spin' : ''}`} />
+          <span>Live Open-Meteo Telemetry {lastSyncTime ? `(${lastSyncTime})` : 'Active'}</span>
         </div>
       </div>
     </div>
