@@ -139,17 +139,49 @@ export async function fetchLiveOpenMeteoRisk(searchQuery: string): Promise<Locat
     const hourlyProbs: number[] = weather.hourly?.precipitation_probability || [];
     const hourlyHums: number[] = weather.hourly?.relative_humidity_2m || [];
     
+    const now = new Date();
+    const currentHour = now.getHours();
+
+    let currentIdx = 0;
+    if (Array.isArray(hourlyTimes) && hourlyTimes.length > 0) {
+      const nowIsoHourStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(currentHour).padStart(2, '0')}:00`;
+      const foundIdx = hourlyTimes.findIndex(t => t && t >= nowIsoHourStr);
+      if (foundIdx !== -1) {
+        currentIdx = foundIdx;
+      } else {
+        currentIdx = Math.min(currentHour, hourlyTimes.length - 1);
+      }
+    } else {
+      currentIdx = currentHour;
+    }
+
     const hourlyProbabilities = [];
-    const nowHourIndex = new Date().getHours();
     for (let i = 0; i < 4; i++) {
-      const idx = Math.min(nowHourIndex + i * 3, hourlyTimes.length - 1);
-      const timeStr = hourlyTimes[idx] 
-        ? new Date(hourlyTimes[idx]).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }) 
-        : `${(12 + i * 3) % 12 || 12}:00 ${i * 3 >= 12 ? 'PM' : 'AM'}`;
-      const itemRain = hourlyRains[idx] !== undefined ? Math.round(hourlyRains[idx] * 10) / 10 : 0;
-      const itemProb = hourlyProbs[idx] !== undefined ? Math.round(hourlyProbs[idx]) : prob24;
+      const targetIdx = Math.min(currentIdx + i * 3, Math.max(0, (hourlyTimes.length || 24) - 1));
+      const rawIso = hourlyTimes[targetIdx];
+      
+      let formattedTime = '';
+      if (rawIso && rawIso.includes('T')) {
+        const hourPart = parseInt(rawIso.split('T')[1].split(':')[0], 10);
+        if (!isNaN(hourPart)) {
+          const period = hourPart >= 12 ? 'PM' : 'AM';
+          const displayHour = hourPart % 12 === 0 ? 12 : hourPart % 12;
+          formattedTime = i === 0 ? `${displayHour}:00 ${period} (Now)` : `${displayHour}:00 ${period}`;
+        }
+      }
+
+      if (!formattedTime) {
+        const calcHour = (currentHour + i * 3) % 24;
+        const period = calcHour >= 12 ? 'PM' : 'AM';
+        const displayHour = calcHour % 12 === 0 ? 12 : calcHour % 12;
+        formattedTime = i === 0 ? `${displayHour}:00 ${period} (Now)` : `${displayHour}:00 ${period}`;
+      }
+
+      const itemRain = hourlyRains[targetIdx] !== undefined ? Math.round(hourlyRains[targetIdx] * 10) / 10 : 0;
+      const itemProb = hourlyProbs[targetIdx] !== undefined ? Math.round(hourlyProbs[targetIdx]) : prob24;
+
       hourlyProbabilities.push({
-        hour: timeStr,
+        hour: formattedTime,
         prob: Math.min(99, Math.max(0, itemProb)),
         rainMm: itemRain,
       });
@@ -157,7 +189,7 @@ export async function fetchLiveOpenMeteoRisk(searchQuery: string): Promise<Locat
 
     const currentTemp = weather.current_weather?.temperature ?? Math.round(weather.daily?.temperature_2m_max?.[0] ?? 25);
     const currentWind = weather.current_weather?.windspeed ?? Math.round(weather.daily?.wind_speed_10m_max?.[0] ?? 10);
-    const currentHumidity = hourlyHums[nowHourIndex] ?? 60;
+    const currentHumidity = hourlyHums[currentIdx] ?? 60;
 
     const fallbackLiveWeather = {
       tempC: Math.round(currentTemp),
