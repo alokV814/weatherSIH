@@ -11,7 +11,7 @@ from backend.historical_validation import HistoricalValidationEngine
 
 def run_validation_experiment(config_path: str = None):
     print("=" * 80)
-    print(" StormTrace AI - SIH26078 Historical Ground-Truth Validation Framework")
+    print(" StormTrace AI -  Historical Ground-Truth Validation Framework")
     print("=" * 80)
 
     engine = HistoricalValidationEngine()

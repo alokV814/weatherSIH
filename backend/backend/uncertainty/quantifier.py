@@ -1,4 +1,4 @@
-﻿"""
+"""
 Ensemble Uncertainty Quantification Engine 
 """
 import numpy as np

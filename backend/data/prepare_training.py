@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger(__name__)
 
 def main():
-    parser = argparse.ArgumentParser(description="StormTrace AI Training Dataset Prep CLI (SIH26078)")
+    parser = argparse.ArgumentParser(description="StormTrace AI Training Dataset Prep CLI")
     parser.add_argument("--timesteps", type=int, default=9, help="Number of 4D forecast timesteps (default: 9)")
     args = parser.parse_args()
 

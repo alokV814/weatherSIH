@@ -64,7 +64,7 @@ def train_ddpm(epochs=5, lr=1e-3, seed=42, output_dir="runs/ddpm"):
     logger.info(f"DDPM Downscaler Training complete. Checkpoint saved to: {ckpt_path}")
 
 def main():
-    parser = argparse.ArgumentParser(description="StormTrace AI DDPM Downscaler Trainer CLI (SIH26078)")
+    parser = argparse.ArgumentParser(description="StormTrace AI DDPM Downscaler Trainer CLI")
     parser.add_argument("--epochs", type=int, default=5)
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--seed", type=int, default=42)

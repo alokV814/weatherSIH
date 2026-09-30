@@ -1,4 +1,4 @@
-﻿"""
+"""
 StormTrace AI - Canonical Meteorological Weather Tensor Schema 
 Tensor Shape: [Ensemble, Time, Variable, Latitude, Longitude] -> [E, T, V, Y, X]
 """

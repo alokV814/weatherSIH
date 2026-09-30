@@ -1,7 +1,7 @@
 {
   "timestamp": "2026-09-26T14:47:39.212600Z",
   "mode": "REAL",
-  "model_version": "v2.0.0-SIH26078",
+  "model_version": "v2.0.0-",
   "total_benchmark_records": 2,
   "results": [
     {
@@ -13,7 +13,7 @@
       "metric": "ERA5_Verification_Status",
       "value": "REAL_DATA_VERIFIED",
       "timestamp": "2026-09-26T14:47:39.212600Z",
-      "model_version": "v2.0.0-SIH26078",
+      "model_version": "v2.0.0-",
       "status": "REAL_DATA_VERIFIED"
     },
     {
@@ -25,7 +25,7 @@
       "metric": "NEPS_G_Verification_Status",
       "value": "UNVERIFIED",
       "timestamp": "2026-09-26T14:47:39.212600Z",
-      "model_version": "v2.0.0-SIH26078",
+      "model_version": "v2.0.0-",
       "status": "UNVERIFIED"
     }
   ]

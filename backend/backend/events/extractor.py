@@ -1,4 +1,4 @@
-﻿"""
+"""
 StormTrace AI - Event Extraction & Bounding Box Extractor 
 """
 import numpy as np

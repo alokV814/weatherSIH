@@ -19,7 +19,7 @@ import {
 import type { MapLayerId, ThreatObject, GridCell5km, IndiaRegionId } from '../types/weather';
 import { INDIA_REGION_PRESETS } from '../data/mockData';
 import { fetchApiThreatObjects, fetchApiRiskGrid } from '../services/apiService';
-import { API_CONFIG, getOpenWeatherTileUrl } from '../config/apiConfig';
+import { API_CONFIG, getOpenWeatherTileUrl, getApiEndpoint } from '../config/apiConfig';
 
 interface LiveRiskMapProps {
   selectedRegion?: IndiaRegionId;

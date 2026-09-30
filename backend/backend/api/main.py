@@ -162,7 +162,7 @@ class LoginReq(BaseModel):
 def health_check():
     return {
         "status": "online",
-        "system": "StormTrace AI Core Engine (SIH26078)",
+        "system": "StormTrace AI Core Engine",
         "pytorch": torch.__version__ if torch else "CPU",
         "owmKeyConfigured": bool(OWM_KEY),
         "database": "SQLite (backend/data/stormtrace.db)",
@@ -846,7 +846,7 @@ def get_location_risk(q: str = Query(..., description="Location name query")):
 
         # 2. Query Open-Meteo for real live weather forecasts
         try:
-            om_url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lng}&daily=precipitation_sum,precipitation_probability_max,temperature_2m_max,wind_speed_10m_max&hourly=precipitation,precipitation_probability,temperature_2m,relative_humidity_2m&timezone=Asia/Kolkata&forecast_days=7"
+            om_url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lng}&daily=precipitation_sum,precipitation_probability_max,temperature_2m_max,wind_speed_10m_max&hourly=precipitation,precipitation_probability,temperature_2m,relative_humidity_2m&timezone=Asia/Kolkata&forecast_days=7&current_weather=true"
             om_res = requests.get(om_url, timeout=5)
             if om_res.ok:
                 om_data = om_res.json()
@@ -867,8 +867,22 @@ def get_location_risk(q: str = Query(..., description="Location name query")):
                 live_prob_48h = int(probs[1] if len(probs) > 1 and probs[1] is not None else 0)
                 live_prob_72h = int(probs[2] if len(probs) > 2 and probs[2] is not None else 0)
 
-                live_temp = round(float(temps[0] if len(temps) > 0 and temps[0] is not None else 25.0), 1)
-                live_wind = round(float(winds[0] if len(winds) > 0 and winds[0] is not None else 10.0), 1)
+                current_w = om_data.get("current_weather", {})
+                if current_w:
+                    live_temp = round(float(current_w.get("temperature", temps[0] if temps else 25.0)), 1)
+                    live_wind = round(float(current_w.get("windspeed", winds[0] if winds else 10.0)), 1)
+                    code = current_w.get("weathercode", 0)
+                    if code in [0]: live_description = "Clear Sky"
+                    elif code in [1, 2, 3]: live_description = "Partly Cloudy"
+                    elif code in [45, 48]: live_description = "Fog"
+                    elif code in [51, 53, 55, 56, 57]: live_description = "Drizzle"
+                    elif code in [61, 63, 65, 66, 67]: live_description = "Rain"
+                    elif code in [71, 73, 75, 77]: live_description = "Snow"
+                    elif code in [80, 81, 82]: live_description = "Rain Showers"
+                    elif code in [95, 96, 99]: live_description = "Thunderstorm"
+                else:
+                    live_temp = round(float(temps[0] if len(temps) > 0 and temps[0] is not None else 25.0), 1)
+                    live_wind = round(float(winds[0] if len(winds) > 0 and winds[0] is not None else 10.0), 1)
 
                 h_times = hourly.get("time", [])
                 h_rains = hourly.get("precipitation", [])
@@ -977,7 +991,7 @@ def get_location_risk(q: str = Query(..., description="Location name query")):
                 "currentRiskLevel": risk_level,
                 "riskScore": score,
                 "liveWeather": {
-                    "tempC": round(live_temp),
+                    "tempC": live_temp,
                     "humidity": live_humidity,
                     "windSpeedKmh": live_wind,
                     "description": live_description,
@@ -988,8 +1002,8 @@ def get_location_risk(q: str = Query(..., description="Location name query")):
                 "forecast72h": {"rainMm": live_rain_72h, "prob": live_prob_72h, "risk": "moderate" if live_rain_72h > 25 else "low"},
                 "forecast5d": {"rainMm": live_rain_5d, "prob": min(50, live_prob_72h), "risk": "low"},
                 "hourlyProbabilities": hourly_probs,
-                "nearestThreatDistanceKm": 12.5 if live_rain_24h == 0 else round(1.2 + (lat % 3), 1),
-                "nearestThreatName": f"LIVE-METEO-{district.upper().replace(' ', '-')}-CELL" if live_rain_24h > 0 else "No Active Anomaly",
+                "nearestThreatDistanceKm": round(1.2 + (lat % 3), 1) if live_rain_24h >= 25 else 0,
+                "nearestThreatName": f"LIVE-METEO-{district.upper().replace(' ', '-')}-CELL" if live_rain_24h >= 25 else "No Active Severe Anomaly",
                 "safetyAdvisory": {
                     "public": public_adv,
                     "farmer": farmer_adv,

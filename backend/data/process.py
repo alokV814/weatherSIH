@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger(__name__)
 
 def main():
-    parser = argparse.ArgumentParser(description="StormTrace AI Data Processing CLI (SIH26078)")
+    parser = argparse.ArgumentParser(description="StormTrace AI Data Processing CLI")
     parser.add_argument("--dataset", type=str, default="era5", help="Dataset to process")
     args = parser.parse_args()
 

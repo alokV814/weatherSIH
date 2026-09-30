@@ -1,4 +1,4 @@
-﻿"""
+"""
 Domain and Physical Constants for  Extreme Weather Tracking Pipeline.
 """
 

@@ -475,7 +475,7 @@ npm run deploy
 ---
 
 ## 📄 13. License & Acknowledgements
-- Developed for **Smart India Hackathon (SIH26078)**.
+- Developed for **Smart India Hackathon**.
 - Live Deployment: [https://alokzhan.github.io/wheatherSIH/](https://alokzhan.github.io/wheatherSIH/)
 - Data provided by **Copernicus Climate Data Store (CDS)** & **ECMWF Open Data**.
 - Map tiles provided by **RainViewer Radar Cache**, **CartoDB**, **ESRI World Imagery**, and **OpenStreetMap**.

@@ -5,7 +5,7 @@ echo =========================================
 
 echo Starting FastAPI Backend Engine on port 8000...
 cd backend
-start "StormTrace Backend" cmd /c "python -m uvicorn api.main:app --host 0.0.0.0 --port 8000"
+start "StormTrace Backend" cmd /c "python -m uvicorn backend.api.main:app --host 0.0.0.0 --port 8000"
 cd ..
 
 echo Starting React Frontend on port 5173...

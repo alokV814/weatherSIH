@@ -24,7 +24,7 @@ from backend.models.inspector import inspect_and_verify_checkpoints
 
 def run_pipeline(config_path: str):
     print("=" * 80)
-    print(" StormTrace AI - End-to-End Scientific Production Pipeline (SIH26078)")
+    print(" StormTrace AI - End-to-End Scientific Production Pipeline")
     print(f" Config: {config_path}")
     print("=" * 80)
 

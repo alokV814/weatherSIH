@@ -1,4 +1,4 @@
-﻿import os
+import os
 import sys
 
 # Ensure backend directory and project root are in sys.path

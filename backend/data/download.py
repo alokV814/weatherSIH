@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger(__name__)
 
 def main():
-    parser = argparse.ArgumentParser(description="StormTrace AI ERA5 Data Ingestion CLI (SIH26078)")
+    parser = argparse.ArgumentParser(description="StormTrace AI ERA5 Data Ingestion CLI")
     parser.add_argument("--dataset", type=str, default="era5", choices=["era5", "gfs", "neps_g"], help="Dataset to download")
     parser.add_argument("--years", type=int, default=1, help="Number of historical years to download")
     parser.add_argument("--lat-min", type=float, default=0.0, help="Min latitude (default: 0.0)")
@@ -24,7 +24,7 @@ def main():
     args = parser.parse_args()
 
     print("=" * 70)
-    print(" StormTrace AI - Real Data Download CLI (SIH26078)")
+    print(" StormTrace AI - Real Data Download CLI")
     print("=" * 70)
     print(f" Dataset requested: {args.dataset}")
     print(f" Domain: Lat [{args.lat_min}°, {args.lat_max}°N], Lon [{args.lon_min}°, {args.lon_max}°E]")

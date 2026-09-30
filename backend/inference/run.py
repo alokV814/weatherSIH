@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger(__name__)
 
 def main():
-    parser = argparse.ArgumentParser(description="StormTrace AI Inference Engine (SIH26078)")
+    parser = argparse.ArgumentParser(description="StormTrace AI Inference Engine")
     parser.add_argument("--input", type=str, default=None, help="Input NetCDF or JSON weather dataset file")
     parser.add_argument("--model", type=str, default=None, help="Path to trained model checkpoint (.pt)")
     args = parser.parse_args()

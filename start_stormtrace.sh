@@ -6,7 +6,7 @@ echo "========================================="
 # Start backend
 echo "Starting FastAPI Backend Engine on port 8000..."
 cd backend
-python -m uvicorn api.main:app --host 0.0.0.0 --port 8000 &
+python -m uvicorn backend.api.main:app --host 0.0.0.0 --port 8000 &
 BACKEND_PID=$!
 cd ..
 

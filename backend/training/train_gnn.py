@@ -69,7 +69,7 @@ def train_gnn(epochs=5, lr=1e-3, seed=42, output_dir="runs/gnn"):
     logger.info(f"ST-GNN Training complete. Checkpoint saved to: {ckpt_path}")
 
 def main():
-    parser = argparse.ArgumentParser(description="StormTrace AI ST-GNN Model Trainer CLI (SIH26078)")
+    parser = argparse.ArgumentParser(description="StormTrace AI ST-GNN Model Trainer CLI")
     parser.add_argument("--epochs", type=int, default=5)
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--seed", type=int, default=42)

@@ -1,4 +1,4 @@
-﻿"""
+"""
 StormTrace AI - PyTorch Dataset for Spherical ST-GNN Training 
 """
 import torch

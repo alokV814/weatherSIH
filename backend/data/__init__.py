@@ -1,3 +1,3 @@
 """
-StormTrace AI Data Management & Ingestion Package (SIH26078)
+StormTrace AI Data Management & Ingestion Package
 """

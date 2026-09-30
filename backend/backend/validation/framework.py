@@ -1,4 +1,4 @@
-﻿"""
+"""
 StormTrace AI - Historical Validation Framework 
 """
 import os

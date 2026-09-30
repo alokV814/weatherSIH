@@ -1,5 +1,5 @@
 """
-StormTrace AI - PyTorch ST-GNN Smoke Training Test (SIH26078)
+StormTrace AI - PyTorch ST-GNN Smoke Training Test
 Verifies that the PyTorch Spherical ST-GNN executes:
 1. Graph construction
 2. Forward pass

@@ -1,4 +1,4 @@
-﻿"""
+"""
 StormTrace AI - Inference Pipeline for PyTorch Spherical ST-GNN Model 
 """
 import os

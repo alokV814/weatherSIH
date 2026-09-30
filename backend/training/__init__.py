@@ -1,3 +1,3 @@
 """
-StormTrace AI Reproducible Model Training Package (SIH26078)
+StormTrace AI Reproducible Model Training Package
 """

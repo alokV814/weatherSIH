@@ -1,4 +1,4 @@
-﻿import os
+import os
 import sys
 import json
 import csv
@@ -16,7 +16,7 @@ from backend.historical_validation import HistoricalValidationEngine
 
 def run_scientific_benchmark_suite():
     """
-    Priority 7 — Reproducible Benchmark Evaluation Runner
+    Priority 7 � Reproducible Benchmark Evaluation Runner
     Generates:
     - outputs/validation/results.json
     - outputs/validation/results.csv

@@ -1,4 +1,4 @@
-﻿"""
+"""
 StormTrace AI - Synthetic NWP Weather Tensor Generator 
 Produces canonical 5D weather tensors matching production schema:
 [ensemble, time, variable, latitude, longitude]
@@ -23,7 +23,7 @@ def generate_synthetic_nwp_tensor(
     """
     if STORMTRACE_MODE == "REAL":
         raise RuntimeError(
-            "❌ REAL DATA ENFORCEMENT FAILURE: STORMTRACE_MODE is set to 'REAL'. "
+            "? REAL DATA ENFORCEMENT FAILURE: STORMTRACE_MODE is set to 'REAL'. "
             "Synthetic weather tensor generation is prohibited in REAL mode. "
             "Please use real dataset adapters in backend/data/adapters/."
         )

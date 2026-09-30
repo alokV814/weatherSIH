@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger(__name__)
 
 def main():
-    parser = argparse.ArgumentParser(description="StormTrace AI ERA5 Climatology Baseline CLI (SIH26078)")
+    parser = argparse.ArgumentParser(description="StormTrace AI ERA5 Climatology Baseline CLI")
     parser.add_argument("--sample-years", type=int, default=30, help="Number of baseline years (default: 30)")
     args = parser.parse_args()
 
