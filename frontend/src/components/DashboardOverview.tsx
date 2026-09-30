@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, lazy, Suspense } from 'react';
 import { 
   Activity, 
-  MapPin, 
   CloudRain, 
   Thermometer, 
   AlertTriangle, 
