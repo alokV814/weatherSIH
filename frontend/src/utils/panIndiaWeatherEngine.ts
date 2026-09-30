@@ -104,17 +104,16 @@ export async function fetchLiveOpenMeteoRisk(searchQuery: string): Promise<Locat
     const rain72 = Math.round((dailyRain[2] || 0) * 10) / 10;
     const rain5d = Math.round((dailyRain[3] || 0) * 10) / 10;
 
-    const rawProb24 = dailyProb[0] || 60;
-    const rawProb48 = dailyProb[1] || 50;
-    const rawProb72 = dailyProb[2] || 40;
+    const rawProb24 = dailyProb[0] ?? 0;
+    const rawProb48 = dailyProb[1] ?? 0;
+    const rawProb72 = dailyProb[2] ?? 0;
 
-    // PyTorch ST-GNN Kernel Density Ensemble Probability Calibration Algorithm
-    const prob24 = Math.min(99, Math.max(88, Math.round(rawProb24 * 0.4 + 60)));
-    const prob48 = Math.min(98, Math.max(82, Math.round(rawProb48 * 0.4 + 58)));
-    const prob72 = Math.min(95, Math.max(78, Math.round(rawProb72 * 0.4 + 55)));
+    const prob24 = Math.min(99, Math.max(0, Math.round(rawProb24)));
+    const prob48 = Math.min(99, Math.max(0, Math.round(rawProb48)));
+    const prob72 = Math.min(99, Math.max(0, Math.round(rawProb72)));
 
     let riskLevel: 'low' | 'moderate' | 'severe' | 'critical' = 'low';
-    let score = 25;
+    let score = 0;
 
     const isHighHillyTerrain = ['Sikkim', 'Kerala', 'Uttarakhand', 'Himachal Pradesh', 'Jammu and Kashmir', 'Assam', 'Meghalaya'].some(s => state.includes(s));
     
@@ -127,9 +126,12 @@ export async function fetchLiveOpenMeteoRisk(searchQuery: string): Promise<Locat
     } else if (rain24 >= 25 || (isHighHillyTerrain && rain24 >= 15)) {
       riskLevel = 'moderate';
       score = Math.min(64, Math.round(40 + (rain24 / 2)));
+    } else if (rain24 > 5) {
+      riskLevel = 'low';
+      score = Math.min(39, Math.round(15 + rain24));
     } else {
       riskLevel = 'low';
-      score = Math.max(15, Math.round(rain24 * 1.5 + 15));
+      score = Math.max(0, Math.min(25, prob24));
     }
 
     const hourlyTimes: string[] = weather.hourly?.time || [];
@@ -143,12 +145,26 @@ export async function fetchLiveOpenMeteoRisk(searchQuery: string): Promise<Locat
       const timeStr = hourlyTimes[idx] 
         ? new Date(hourlyTimes[idx]).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }) 
         : `${(12 + i * 3) % 12 || 12}:00 ${i * 3 >= 12 ? 'PM' : 'AM'}`;
+      const itemRain = hourlyRains[idx] !== undefined ? Math.round(hourlyRains[idx] * 10) / 10 : 0;
+      const itemProb = hourlyProbs[idx] !== undefined ? Math.round(hourlyProbs[idx]) : prob24;
       hourlyProbabilities.push({
         hour: timeStr,
-        prob: Math.min(99, Math.round(hourlyProbs[idx] ?? prob24)),
-        rainMm: Math.round((hourlyRains[idx] ?? (rain24 / 8)) * 10) / 10,
+        prob: Math.min(99, Math.max(0, itemProb)),
+        rainMm: itemRain,
       });
     }
+
+    const publicAdv = rain24 > 35
+      ? `EXTREME WEATHER RED ALERT: ${rain24} mm 24h rainfall forecasted over ${district} (${state}). High risk of flash floods and waterlogging.`
+      : rain24 > 5
+      ? `LOCAL RAIN ADVISORY: ${rain24} mm precipitation forecasted over ${district}. Drive with caution and stay updated.`
+      : `CLEAR WEATHER ADVISORY: 0 mm rain forecasted over ${district} (${state}). Clear to partly cloudy skies with pleasant conditions.`;
+
+    const farmerAdv = rain24 > 35
+      ? `CROP ADVISORY (${district}): Expected ${rain24} mm rain. Suspend field spraying/fertilization and clear drainage channels.`
+      : `CROP ADVISORY (${district}): Clear / light weather expected (${rain24} mm rain). Ideal conditions for field work, harvesting, and irrigation.`;
+
+    const officialAdv = `DISTRICT TELEMETRY (${district}): Live Open-Meteo & OpenWeatherMap telemetry reports ${rain24} mm 24h precipitation. Risk Index: ${score}/100 (${riskLevel.toUpperCase()}).`;
 
     return {
       locationName: displayName,
@@ -160,21 +176,17 @@ export async function fetchLiveOpenMeteoRisk(searchQuery: string): Promise<Locat
       currentRiskLevel: riskLevel,
       riskScore: score,
       forecast24h: { rainMm: rain24, prob: prob24, risk: riskLevel },
-      forecast48h: { rainMm: rain48, prob: prob48, risk: rain48 > 100 ? 'critical' : rain48 > 50 ? 'severe' : 'moderate' },
-      forecast72h: { rainMm: rain72, prob: prob72, risk: rain72 > 50 ? 'severe' : 'moderate' },
-      forecast5d: { rainMm: rain5d, prob: 25, risk: 'low' },
+      forecast48h: { rainMm: rain48, prob: prob48, risk: rain48 > 100 ? 'critical' : rain48 > 50 ? 'severe' : rain48 > 15 ? 'moderate' : 'low' },
+      forecast72h: { rainMm: rain72, prob: prob72, risk: rain72 > 50 ? 'severe' : rain72 > 15 ? 'moderate' : 'low' },
+      forecast5d: { rainMm: rain5d, prob: Math.min(50, prob72), risk: rain5d > 50 ? 'severe' : 'low' },
       hourlyProbabilities,
-      nearestThreatDistanceKm: Math.round((2.0 + (lat % 3)) * 10) / 10,
-      nearestThreatName: `LIVE-METEO-${district.toUpperCase().replace(/[^A-Z0-9]/g, '-')}-CONVECTIVE-CELL`,
+      nearestThreatDistanceKm: rain24 === 0 ? 25.0 : Math.round((2.0 + (lat % 3)) * 10) / 10,
+      nearestThreatName: rain24 > 0 ? `LIVE-METEO-${district.toUpperCase().replace(/[^A-Z0-9]/g, '-')}-CELL` : 'No Active Threat Cell',
       liveWeather: liveOwm || undefined,
       safetyAdvisory: {
-        public: riskLevel === 'critical'
-          ? `EXTREME WEATHER RED ALERT: ${rain24} mm 24h rainfall forecasted over ${district} (${state}). High risk of flash floods, landslides on slopes, and severe waterlogging.`
-          : riskLevel === 'severe'
-          ? `HEAVY RAINFALL ALERT: ${rain24} mm precipitation forecasted over ${district}. Drive with caution and stay updated on weather alerts.`
-          : `LOCAL WEATHER ADVISORY: ${rain24} mm precipitation forecasted over ${district}. Standard weather activity across the district.`,
-        farmer: `CROP ADVISORY (${district}): Expected ${rain24} mm rain. ${rain24 > 35 ? 'Suspend field spraying/fertilization and open runoff channels.' : 'Normal crop management operations.'}`,
-        official: `DISTRICT ADVISORY (${district}): Live Open-Meteo ECMWF data reports ${rain24} mm 24h precipitation. Calculated Risk Index: ${score}/100 (${riskLevel.toUpperCase()}).`
+        public: publicAdv,
+        farmer: farmerAdv,
+        official: officialAdv
       }
     };
   } catch (err) {

@@ -44,12 +44,12 @@ export async function fetchRealTimeWeatherDataset(lat: number, lon: number): Pro
     const res = await fetch(url);
     if (res.ok) {
       const data = await res.json();
-      const rain = data.daily?.precipitation_sum?.[0] ?? 45.2;
-      const temp = data.daily?.temperature_2m_max?.[0] ?? 28.5;
-      const wind = data.daily?.wind_speed_10m_max?.[0] ?? 18.2;
-      const rh = data.hourly?.relative_humidity_2m?.[0] ?? 84;
-      const press = data.hourly?.surface_pressure?.[0] ?? 1008;
-      const soil = data.hourly?.soil_moisture_0_to_7cm?.[0] ?? 0.42;
+      const rain = data.daily?.precipitation_sum?.[0] ?? 0.0;
+      const temp = data.daily?.temperature_2m_max?.[0] ?? 26.5;
+      const wind = data.daily?.wind_speed_10m_max?.[0] ?? 12.0;
+      const rh = data.hourly?.relative_humidity_2m?.[0] ?? 65;
+      const press = data.hourly?.surface_pressure?.[0] ?? 1012;
+      const soil = data.hourly?.soil_moisture_0_to_7cm?.[0] ?? 0.35;
 
       // Real 30-year Copernicus ERA5 baseline comparison (mean = 38.0mm)
       const efi = Math.min(0.99, Math.max(-0.99, (rain - 38.0) / 40.0));
@@ -69,14 +69,14 @@ export async function fetchRealTimeWeatherDataset(lat: number, lon: number): Pro
     console.warn('Real ERA5 Open-Meteo live API fallback active:', e);
   }
   return {
-    temperature2m: 28.5,
-    precipitation24h: 85.0,
-    humidity: 88,
-    windSpeed10m: 22.4,
-    surfacePressure: 1006.2,
-    soilMoisture: 0.84,
+    temperature2m: 26.5,
+    precipitation24h: 0.0,
+    humidity: 65,
+    windSpeed10m: 12.0,
+    surfacePressure: 1012.0,
+    soilMoisture: 0.35,
     era5BaselineMean: 38.0,
-    efiScore: 0.94,
+    efiScore: 0.0,
   };
 }
 
