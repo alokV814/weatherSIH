@@ -8,11 +8,12 @@ import {
   ArrowRight, 
   Layers,
   Sparkles,
-  TrendingUp
+  TrendingUp,
+  ShieldAlert
 } from 'lucide-react';
 
 import type { IndiaRegionId, ThreatObject, AlertItem } from '../types/weather';
-import { fetchApiAlerts, fetchApiThreatObjects } from '../services/apiService';
+import { fetchApiAlerts, fetchApiThreatObjects, fetchApiDisasterResources } from '../services/apiService';
 
 // Lazy load to enable proper code splitting with App.tsx
 const LiveRiskMap = lazy(() => import('./LiveRiskMap').then(m => ({ default: m.LiveRiskMap })));
@@ -54,22 +55,28 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
 }) => {
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
   const [threatObjects, setThreatObjects] = useState<ThreatObject[]>([]);
+  const [disasterResources, setDisasterResources] = useState<any[]>([]);
 
   useEffect(() => {
     let isMounted = true;
     async function loadDashboardData() {
-      const [alertsRes, threatsRes] = await Promise.all([
+      const [alertsRes, threatsRes, resourcesRes] = await Promise.all([
         fetchApiAlerts(selectedRegion),
-        fetchApiThreatObjects()
+        fetchApiThreatObjects(),
+        fetchApiDisasterResources()
       ]);
       if (isMounted) {
         setAlerts(alertsRes.alerts);
         setThreatObjects(threatsRes);
+        setDisasterResources(resourcesRes);
       }
     }
     loadDashboardData();
     return () => { isMounted = false; };
   }, [selectedRegion]);
+
+  const totalNdrf = useMemo(() => disasterResources.reduce((acc, curr) => acc + curr.ndrfTeams, 0), [disasterResources]);
+  const totalBoats = useMemo(() => disasterResources.reduce((acc, curr) => acc + curr.evacuationBoats, 0), [disasterResources]);
 
   const alertStats = useMemo(() => ({
     critical: alerts.filter(a => a.riskLevel === 'critical').length,
@@ -197,18 +204,17 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
           iconColor="text-red-600 dark:text-red-400"
         />
         <StatCard
-          label="Areas at Risk"
-          value="12 Districts"
+          label="Live NDRF Allocation"
+          value={`${totalNdrf} Teams`}
           subtext={
             <div className="flex items-center gap-2 text-slate-500">
-              <span className="text-red-500 font-bold">High: 5</span> • 
-              <span className="text-amber-500 font-bold"> Mod: 5</span> • 
-              <span className="text-emerald-500 font-bold"> Low: 2</span>
+              <span className="text-emerald-500 font-bold">Deployed</span> • 
+              <span className="text-indigo-500 font-bold">{totalBoats} Boats</span>
             </div>
           }
-          icon={MapPin}
-          iconBg="bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900/40"
-          iconColor="text-amber-600 dark:text-amber-400"
+          icon={ShieldAlert}
+          iconBg="bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-900/40"
+          iconColor="text-indigo-600 dark:text-indigo-400"
         />
         <StatCard
           label="Total Precipitation (Live)"
