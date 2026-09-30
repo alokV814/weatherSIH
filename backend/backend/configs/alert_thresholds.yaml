@@ -1,0 +1,15 @@
+# Alert Thresholds Configuration
+
+hazards:
+  EXTREME_PRECIPITATION:
+    low: 15.0      # mm/h
+    moderate: 35.0 # mm/h
+    severe: 75.0   # mm/h
+  WIND_SQUALL:
+    low: 30.0      # km/h
+    moderate: 60.0 # km/h
+    severe: 90.0   # km/h
+  HEAT_DOME:
+    low: 35.0      # Celsius
+    moderate: 40.0 # Celsius
+    severe: 45.0   # Celsius

@@ -658,6 +658,76 @@ def get_risk_grid(region: str = "up_ganges", lat: float = None, lng: float = Non
             grid_id += 1
     return grid
 
+@app.post("/api/alert")
+@app.post("/api/v1/alert")
+def trigger_alert_api(payload: dict):
+    """
+    Receives a 5km DDPM anomaly slice, performs argmax to find the exact core coordinate, 
+    and returns a GeoJSON marker + a 5km radius circle based on hazard thresholds.
+    """
+    import yaml
+    
+    slice_data = payload.get("slice", [])
+    if not slice_data:
+        return {"status": "error", "message": "No slice data provided"}
+    
+    try:
+        slice_np = np.array(slice_data)
+        # Perform argmax to find the core
+        max_idx = np.unravel_index(np.argmax(slice_np, axis=None), slice_np.shape)
+        peak_intensity = float(slice_np[max_idx])
+        
+        lat_min = payload.get("lat_min", 6.0)
+        lat_max = payload.get("lat_max", 38.0)
+        lon_min = payload.get("lon_min", 68.0)
+        lon_max = payload.get("lon_max", 98.0)
+        
+        # Map index to coordinate
+        rows, cols = slice_np.shape
+        lat_step = (lat_max - lat_min) / max(1, rows - 1)
+        lon_step = (lon_max - lon_min) / max(1, cols - 1)
+        
+        core_lat = lat_min + max_idx[0] * lat_step
+        core_lon = lon_min + max_idx[1] * lon_step
+        
+        # Read thresholds
+        config_path = os.path.join(BACKEND_DIR, "configs", "alert_thresholds.yaml")
+        with open(config_path, "r") as f:
+            thresholds = yaml.safe_load(f)["hazards"]["EXTREME_PRECIPITATION"]
+        
+        if peak_intensity >= thresholds["severe"]:
+            level = "severe"
+        elif peak_intensity >= thresholds["moderate"]:
+            level = "moderate"
+        else:
+            level = "low"
+            
+        return {
+            "status": "success",
+            "core_coordinate": [core_lat, core_lon],
+            "peak_intensity": peak_intensity,
+            "risk_level": level,
+            "geojson": {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [core_lon, core_lat]
+                        },
+                        "properties": {
+                            "radius_km": 5.0,
+                            "intensity": peak_intensity,
+                            "risk_level": level
+                        }
+                    }
+                ]
+            }
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
 @app.get("/api/v1/alerts")
 def list_alerts():
     """List active weather anomalies as localized spatial alerts for NDRF/Authorities updated in REAL-TIME."""

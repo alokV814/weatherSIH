@@ -312,6 +312,33 @@ export const LiveRiskMap: React.FC<LiveRiskMapProps> = ({ selectedRegion = 'all'
   const [liveFeatures, setLiveFeatures] = useState<any[]>(PAN_INDIA_RAINFALL_FEATURES);
   const [lastSyncTime, setLastSyncTime] = useState<string>('');
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
+  const [alertGeoJson, setAlertGeoJson] = useState<any>(null);
+
+  const fetchAlertGeojson = useCallback(async () => {
+    try {
+      const mockSlice = Array(5).fill(0).map(() => Array(5).fill(0));
+      mockSlice[2][2] = 85.0; // severe
+      const res = await fetch(getApiEndpoint('/api/v1/alert'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slice: mockSlice,
+          lat_min: 10.0, lat_max: 30.0,
+          lon_min: 70.0, lon_max: 90.0
+        })
+      });
+      const data = await res.json();
+      if (data.status === 'success' && data.geojson) {
+        setAlertGeoJson(data.geojson);
+      }
+    } catch (e) {
+      console.warn("Failed to fetch alert geojson", e);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAlertGeojson();
+  }, [fetchAlertGeojson]);
 
   const syncLiveTelemetry = useCallback(async (stepHour: number = 0) => {
     setIsSyncing(true);
@@ -451,10 +478,17 @@ export const LiveRiskMap: React.FC<LiveRiskMapProps> = ({ selectedRegion = 'all'
           })),
         });
       }
+
+      if (alertGeoJson) {
+        const alertSource = map.getSource('ddpm-alert-source') as mapboxgl.GeoJSONSource;
+        if (alertSource) {
+          alertSource.setData(alertGeoJson);
+        }
+      }
     } catch (e) {
       console.warn('GeoJSON live update skipped:', e);
     }
-  }, [liveFeatures]);
+  }, [liveFeatures, alertGeoJson]);
 
   useEffect(() => {
     let isMounted = true;
@@ -582,9 +616,9 @@ export const LiveRiskMap: React.FC<LiveRiskMapProps> = ({ selectedRegion = 'all'
         type: 'raster',
         source: 'rain-radar-source',
         paint: {
-          'raster-opacity': layerOpacity * 0.95,
-          'raster-contrast': 0.25,
-          'raster-saturation': 0.35,
+          'raster-opacity': layerOpacity * 1.0,
+          'raster-contrast': 0.5,
+          'raster-saturation': 1.0,
           'raster-fade-duration': 100,
         },
       });
@@ -773,7 +807,6 @@ export const LiveRiskMap: React.FC<LiveRiskMapProps> = ({ selectedRegion = 'all'
         },
       });
 
-      // --- 6. Threat Footprints GeoJSON ---
       const threatFeatures = threatObjects.map((threat: ThreatObject) => ({
         type: 'Feature' as const,
         geometry: {
@@ -802,6 +835,25 @@ export const LiveRiskMap: React.FC<LiveRiskMapProps> = ({ selectedRegion = 'all'
           type: 'FeatureCollection',
           features: threatFeatures,
         },
+      });
+
+      // --- 7. DDPM Alert Circle ---
+      map.addSource('ddpm-alert-source', {
+        type: 'geojson',
+        data: alertGeoJson || { type: 'FeatureCollection', features: [] }
+      });
+
+      map.addLayer({
+        id: 'ddpm-alert-circle',
+        type: 'circle',
+        source: 'ddpm-alert-source',
+        paint: {
+          'circle-radius': 30,
+          'circle-color': '#ef4444',
+          'circle-opacity': 0.5,
+          'circle-stroke-width': 3,
+          'circle-stroke-color': '#b91c1c'
+        }
       });
 
       map.addLayer({
