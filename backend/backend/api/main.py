@@ -781,13 +781,33 @@ def get_location_risk(q: str = Query(..., description="Location name query")):
                 if h_hums and len(h_hums) > 0 and h_hums[0] is not None:
                     live_humidity = int(h_hums[0])
 
-                # Extract hourly forecast for next 3-12 hours
-                curr_h = datetime.now().hour
-                for i in range(3):
-                    h_idx = min(curr_h + i * 3, len(h_times) - 1) if h_times else i * 3
-                    h_rain_val = round(float(h_rains[h_idx] if len(h_rains) > h_idx and h_rains[h_idx] is not None else 0), 1)
-                    h_prob_val = int(h_probs[h_idx] if len(h_probs) > h_idx and h_probs[h_idx] is not None else live_prob_24h)
-                    time_label = f"{(curr_h + i * 3) % 12 or 12}:00 {'PM' if (curr_h + i * 3) % 24 >= 12 else 'AM'}"
+                # Extract hourly forecast for next 12 hours starting from current IST hour
+                from datetime import timezone, timedelta
+                ist_tz = timezone(timedelta(hours=5, minutes=30))
+                now_ist = datetime.now(ist_tz)
+                now_iso_hour_str = f"{now_ist.year:04d}-{now_ist.month:02d}-{now_ist.day:02d}T{now_ist.hour:02d}:00"
+
+                current_idx = 0
+                if h_times:
+                    for idx, t_str in enumerate(h_times):
+                        if t_str and t_str >= now_iso_hour_str:
+                            current_idx = idx
+                            break
+
+                for i in range(4):
+                    target_idx = min(current_idx + i * 3, max(0, len(h_times) - 1)) if h_times else i * 3
+                    h_rain_val = round(float(h_rains[target_idx] if len(h_rains) > target_idx and h_rains[target_idx] is not None else 0), 1)
+                    h_prob_val = int(h_probs[target_idx] if len(h_probs) > target_idx and h_probs[target_idx] is not None else live_prob_24h)
+                    
+                    raw_time_str = h_times[target_idx] if (h_times and target_idx < len(h_times)) else None
+                    if raw_time_str and "T" in raw_time_str:
+                        h_val = int(raw_time_str.split("T")[1].split(":")[0])
+                    else:
+                        h_val = (now_ist.hour + i * 3) % 24
+
+                    period = "PM" if h_val >= 12 else "AM"
+                    disp_h = 12 if h_val % 12 == 0 else h_val % 12
+                    time_label = f"{disp_h}:00 {period}"
                     hourly_probs.append({"hour": time_label, "prob": h_prob_val, "rainMm": h_rain_val})
         except Exception as e:
             print(f"Open-Meteo backend fetch error: {e}")
