@@ -392,24 +392,27 @@ export const LiveRiskMap: React.FC<LiveRiskMapProps> = ({ selectedRegion = 'all'
     const map = mapRef.current;
     if (!map || !map.isStyleLoaded()) return;
 
-    const isohyetFeatures = liveFeatures.map((item, idx) => ({
-      type: 'Feature' as const,
-      geometry: {
-        type: 'Polygon' as const,
-        coordinates: [item.coords],
-      },
-      properties: {
-        id: `ISO-${idx + 1}`,
-        name: item.name,
-        district: item.district,
-        state: item.state,
-        rainMm: item.rainMm,
-        efiPercentile: item.efiPercentile,
-        probGt50: item.probGt50,
-        riskLevel: item.riskLevel,
-        color: item.riskLevel === 'critical' ? '#ef4444' : item.riskLevel === 'severe' ? '#f97316' : item.riskLevel === 'moderate' ? '#f59e0b' : '#10b981'
-      }
-    }));
+    // Render rainfall radar polygons ONLY for regions with actual active rainfall (rainMm > 0)
+    const isohyetFeatures = liveFeatures
+      .filter(item => item.rainMm > 0)
+      .map((item, idx) => ({
+        type: 'Feature' as const,
+        geometry: {
+          type: 'Polygon' as const,
+          coordinates: [item.coords],
+        },
+        properties: {
+          id: `ISO-${idx + 1}`,
+          name: item.name,
+          district: item.district,
+          state: item.state,
+          rainMm: item.rainMm,
+          efiPercentile: item.efiPercentile,
+          probGt50: item.probGt50,
+          riskLevel: item.riskLevel,
+          color: item.riskLevel === 'critical' ? '#ef4444' : item.riskLevel === 'severe' ? '#f97316' : item.riskLevel === 'moderate' ? '#f59e0b' : '#06b6d4'
+        }
+      }));
 
     try {
       const isoSource = map.getSource('rain-isohyets-source') as mapboxgl.GeoJSONSource;
@@ -424,7 +427,7 @@ export const LiveRiskMap: React.FC<LiveRiskMapProps> = ({ selectedRegion = 'all'
       if (anomalySource) {
         anomalySource.setData({
           type: 'FeatureCollection',
-          features: isohyetFeatures.filter(f => f.properties.efiPercentile > 60.0).map(f => ({
+          features: isohyetFeatures.filter(f => f.properties.rainMm > 5.0 && f.properties.efiPercentile > 60.0).map(f => ({
             ...f,
             properties: {
               ...f.properties,
@@ -438,7 +441,7 @@ export const LiveRiskMap: React.FC<LiveRiskMapProps> = ({ selectedRegion = 'all'
       if (probSource) {
         probSource.setData({
           type: 'FeatureCollection',
-          features: isohyetFeatures.map(f => ({
+          features: isohyetFeatures.filter(f => f.properties.probGt50 > 20).map(f => ({
             type: 'Feature' as const,
             geometry: f.geometry,
             properties: {
@@ -585,24 +588,26 @@ export const LiveRiskMap: React.FC<LiveRiskMapProps> = ({ selectedRegion = 'all'
       });
 
       // --- 2. Pan-India Downscaled Rainfall Isohyet GeoJSON Layer ---
-      const isohyetFeatures = liveFeatures.map((item, idx) => ({
-        type: 'Feature' as const,
-        geometry: {
-          type: 'Polygon' as const,
-          coordinates: [item.coords],
-        },
-        properties: {
-          id: `ISO-${idx + 1}`,
-          name: item.name,
-          district: item.district,
-          state: item.state,
-          rainMm: item.rainMm,
-          efiPercentile: item.efiPercentile,
-          probGt50: item.probGt50,
-          riskLevel: item.riskLevel,
-          color: item.riskLevel === 'critical' ? '#ef4444' : item.riskLevel === 'severe' ? '#f97316' : item.riskLevel === 'moderate' ? '#f59e0b' : '#10b981'
-        }
-      }));
+      const isohyetFeatures = liveFeatures
+        .filter(item => item.rainMm > 0)
+        .map((item, idx) => ({
+          type: 'Feature' as const,
+          geometry: {
+            type: 'Polygon' as const,
+            coordinates: [item.coords],
+          },
+          properties: {
+            id: `ISO-${idx + 1}`,
+            name: item.name,
+            district: item.district,
+            state: item.state,
+            rainMm: item.rainMm,
+            efiPercentile: item.efiPercentile,
+            probGt50: item.probGt50,
+            riskLevel: item.riskLevel,
+            color: item.riskLevel === 'critical' ? '#ef4444' : item.riskLevel === 'severe' ? '#f97316' : item.riskLevel === 'moderate' ? '#f59e0b' : '#06b6d4'
+          }
+        }));
 
       map.addSource('rain-isohyets-source', {
         type: 'geojson',
