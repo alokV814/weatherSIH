@@ -43,121 +43,121 @@ const RISK_GLOW: Record<string, string> = {
 // Pan-India Isohyets GeoJSON features representing downscaled rainfall zones across India
 const PAN_INDIA_RAINFALL_FEATURES = [
   {
-    name: 'Supaul Kosi Catchment Heavy Downpour',
+    name: 'Supaul Kosi Catchment Rain Zone',
     district: 'Supaul',
     state: 'Bihar',
-    rainMm: 165.0,
-    efiPercentile: 98.8,
-    probGt50: 95,
-    riskLevel: 'critical',
+    rainMm: 0.0,
+    efiPercentile: 15.0,
+    probGt50: 0,
+    riskLevel: 'low',
     coords: [
       [86.4, 25.8], [86.9, 25.8], [87.1, 26.4], [86.7, 26.6], [86.3, 26.2], [86.4, 25.8]
     ]
   },
   {
-    name: 'Mumbai Suburban Urban Cloudburst Cell',
+    name: 'Mumbai Suburban Urban Catchment',
     district: 'Mumbai Suburban',
     state: 'Maharashtra',
-    rainMm: 135.0,
-    efiPercentile: 99.2,
-    probGt50: 97,
-    riskLevel: 'critical',
+    rainMm: 0.0,
+    efiPercentile: 15.0,
+    probGt50: 0,
+    riskLevel: 'low',
     coords: [
       [72.7, 18.9], [73.1, 18.9], [73.2, 19.3], [72.8, 19.4], [72.6, 19.1], [72.7, 18.9]
     ]
   },
   {
-    name: 'Wayanad Orographic Monsoon Downpour',
+    name: 'Wayanad High Range Orographic Corridor',
     district: 'Wayanad',
     state: 'Kerala',
-    rainMm: 185.0,
-    efiPercentile: 99.6,
-    probGt50: 98,
-    riskLevel: 'critical',
+    rainMm: 0.0,
+    efiPercentile: 15.0,
+    probGt50: 0,
+    riskLevel: 'low',
     coords: [
       [75.9, 11.4], [76.4, 11.4], [76.5, 11.9], [76.0, 12.0], [75.8, 11.6], [75.9, 11.4]
     ]
   },
   {
-    name: 'Brahmaputra Middle Valley Inundation',
+    name: 'Brahmaputra Middle Valley Basin',
     district: 'Kamrup Metropolitan',
     state: 'Assam',
-    rainMm: 110.0,
-    efiPercentile: 96.5,
-    probGt50: 91,
-    riskLevel: 'severe',
+    rainMm: 0.0,
+    efiPercentile: 15.0,
+    probGt50: 0,
+    riskLevel: 'low',
     coords: [
       [91.4, 25.9], [92.1, 25.9], [92.3, 26.4], [91.7, 26.6], [91.3, 26.2], [91.4, 25.9]
     ]
   },
   {
-    name: 'Mahanadi Coastal Delta Storm Rainfall',
+    name: 'Mahanadi Coastal Delta Basin',
     district: 'Cuttack',
     state: 'Odisha',
-    rainMm: 145.0,
-    efiPercentile: 98.1,
-    probGt50: 94,
-    riskLevel: 'critical',
+    rainMm: 0.0,
+    efiPercentile: 15.0,
+    probGt50: 0,
+    riskLevel: 'low',
     coords: [
       [85.6, 20.1], [86.4, 20.1], [86.5, 20.7], [85.9, 20.8], [85.5, 20.4], [85.6, 20.1]
     ]
   },
   {
-    name: 'Prayagraj Sangam Confluence Flash Cell',
+    name: 'Prayagraj Sangam Confluence Basin',
     district: 'Prayagraj',
     state: 'Uttar Pradesh',
-    rainMm: 118.4,
-    efiPercentile: 97.4,
-    probGt50: 92,
-    riskLevel: 'critical',
+    rainMm: 0.0,
+    efiPercentile: 15.0,
+    probGt50: 0,
+    riskLevel: 'low',
     coords: [
       [81.6, 25.2], [82.1, 25.2], [82.2, 25.7], [81.7, 25.8], [81.5, 25.4], [81.6, 25.2]
     ]
   },
   {
-    name: 'Delhi-NCR & Yamuna Catchment Rain',
+    name: 'Delhi-NCR & Yamuna Catchment',
     district: 'New Delhi',
     state: 'Delhi',
-    rainMm: 95.0,
-    efiPercentile: 95.2,
-    probGt50: 84,
-    riskLevel: 'severe',
+    rainMm: 0.0,
+    efiPercentile: 15.0,
+    probGt50: 0,
+    riskLevel: 'low',
     coords: [
       [76.9, 28.3], [77.5, 28.3], [77.6, 28.9], [77.0, 29.0], [76.8, 28.5], [76.9, 28.3]
     ]
   },
   {
-    name: 'Chamoli Alaknanda Himalayan Surge',
+    name: 'Chamoli Alaknanda Himalayan Basin',
     district: 'Chamoli',
     state: 'Uttarakhand',
-    rainMm: 155.0,
-    efiPercentile: 99.1,
-    probGt50: 96,
-    riskLevel: 'critical',
+    rainMm: 0.0,
+    efiPercentile: 15.0,
+    probGt50: 0,
+    riskLevel: 'low',
     coords: [
       [79.1, 30.1], [79.8, 30.1], [79.9, 30.7], [79.3, 30.8], [79.0, 30.4], [79.1, 30.1]
     ]
   },
   {
-    name: 'South Peninsular Coastal Surge Rain',
+    name: 'South Peninsular Coastal Belt',
     district: 'Chennai',
     state: 'Tamil Nadu',
-    rainMm: 88.0,
-    efiPercentile: 94.0,
-    probGt50: 78,
-    riskLevel: 'moderate',
+    rainMm: 0.0,
+    efiPercentile: 15.0,
+    probGt50: 0,
+    riskLevel: 'low',
     coords: [
       [80.0, 12.8], [80.5, 12.8], [80.6, 13.3], [80.1, 13.4], [79.9, 13.0], [80.0, 12.8]
     ]
   },
   {
-    name: 'Sundarbans Bay Convective Cell',
+    name: 'Sundarbans Bay Coastal Zone',
     district: 'South 24 Parganas',
     state: 'West Bengal',
-    rainMm: 130.0,
-    efiPercentile: 97.8,
-    probGt50: 93,
-    riskLevel: 'severe',
+    rainMm: 0.0,
+    efiPercentile: 15.0,
+    probGt50: 0,
+    riskLevel: 'low',
     coords: [
       [88.1, 21.6], [88.8, 21.6], [88.9, 22.2], [88.3, 22.3], [88.0, 21.9], [88.1, 21.6]
     ]
@@ -166,34 +166,34 @@ const PAN_INDIA_RAINFALL_FEATURES = [
     name: 'South Gujarat Surat Coastal Belt',
     district: 'Surat',
     state: 'Gujarat',
-    rainMm: 105.0,
-    efiPercentile: 96.0,
-    probGt50: 88,
-    riskLevel: 'severe',
+    rainMm: 0.0,
+    efiPercentile: 15.0,
+    probGt50: 0,
+    riskLevel: 'low',
     coords: [
       [72.6, 21.0], [73.2, 21.0], [73.3, 21.5], [72.7, 21.6], [72.5, 21.2], [72.6, 21.0]
     ]
   },
   {
-    name: 'Western Ghats Orographic Belt',
+    name: 'Western Ghats Ratnagiri Belt',
     district: 'Ratnagiri',
     state: 'Maharashtra',
-    rainMm: 175.0,
-    efiPercentile: 99.4,
-    probGt50: 97,
-    riskLevel: 'critical',
+    rainMm: 0.0,
+    efiPercentile: 15.0,
+    probGt50: 0,
+    riskLevel: 'low',
     coords: [
       [73.1, 16.8], [73.7, 16.8], [73.8, 17.4], [73.2, 17.5], [73.0, 17.0], [73.1, 16.8]
     ]
   },
   {
-    name: 'Rohilkhand Ganges Upper Basin Rain',
+    name: 'Rohilkhand Ganges Upper Basin',
     district: 'Shahjahanpur',
     state: 'Uttar Pradesh',
-    rainMm: 125.0,
-    efiPercentile: 97.0,
-    probGt50: 90,
-    riskLevel: 'severe',
+    rainMm: 0.0,
+    efiPercentile: 15.0,
+    probGt50: 0,
+    riskLevel: 'low',
     coords: [
       [79.6, 27.6], [80.2, 27.6], [80.3, 28.2], [79.7, 28.3], [79.5, 27.8], [79.6, 27.6]
     ]
@@ -907,57 +907,8 @@ export const LiveRiskMap: React.FC<LiveRiskMapProps> = ({ selectedRegion = 'all'
         },
       });
 
-      // --- 8. High Speed Wind & Cyclones Overlay Layer ---
-      const windExtremesFeatures = [
-        {
-          type: 'Feature' as const,
-          geometry: {
-            type: 'Polygon' as const,
-            coordinates: [[
-              [82.0, 12.0], [88.0, 12.0], [89.0, 15.0], [88.0, 18.0], [82.0, 18.0], [81.0, 15.0], [82.0, 12.0]
-            ]]
-          },
-          properties: {
-            id: 'WIND-CYC-01',
-            name: 'Super Cyclone Amphan 220 km/h Wind Radius',
-            windSpeed: 220,
-            type: 'cyclone',
-            color: '#ef4444'
-          }
-        },
-        {
-          type: 'Feature' as const,
-          geometry: {
-            type: 'Polygon' as const,
-            coordinates: [[
-              [83.0, 24.5], [86.0, 24.5], [86.5, 26.5], [83.5, 26.5], [83.0, 24.5]
-            ]]
-          },
-          properties: {
-            id: 'WIND-SQUALL-02',
-            name: 'Pre-Monsoon Squall Line 135 km/h Gust Band',
-            windSpeed: 135,
-            type: 'squall',
-            color: '#f59e0b'
-          }
-        },
-        {
-          type: 'Feature' as const,
-          geometry: {
-            type: 'Polygon' as const,
-            coordinates: [[
-              [72.5, 18.5], [73.5, 18.5], [73.8, 19.8], [72.8, 19.8], [72.5, 18.5]
-            ]]
-          },
-          properties: {
-            id: 'WIND-GALE-03',
-            name: 'Konkan Coast Gale Force Wind Zone',
-            windSpeed: 110,
-            type: 'gale',
-            color: '#f97316'
-          }
-        }
-      ];
+      // --- 8. High Speed Wind & Cyclones Overlay Layer (Dynamic Live Telemetry Only) ---
+      const windExtremesFeatures: any[] = [];
 
       map.addSource('wind-extremes-source', {
         type: 'geojson',
