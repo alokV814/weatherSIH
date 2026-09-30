@@ -41,6 +41,8 @@ However, predicting localized extreme weather anomalies (cyclones, cloudbursts, 
 2. **Coarse Spatial Grid Resolution**: Global $12\text{ km}$ NWP models fail to resolve steep orographic features (such as Western Ghats in Wayanad or Himalayan ravines in Sikkim and Chamoli).
 3. **Manual Tracking Limitations**: Manually tracking 4D spatio-temporal storm centroids across 50 ensemble members is slow and prone to subjective delay during emergency evacuations.
 
+> **Source Label**: The real-time tracking engine currently uses the **NOAA GEFS Seamless Ensemble (31-members)** via the Open-Meteo API as the open ensemble data source, adapting the NWPEnsembleDataset interface.
+
 ---
 
 ### ✅ The StormTrace AI Solution

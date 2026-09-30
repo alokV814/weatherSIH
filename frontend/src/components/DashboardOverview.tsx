@@ -118,8 +118,11 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
             <Sparkles className="h-3.5 w-3.5" />
             <span>AI-Powered Extreme Weather Tracking & Hyperlocal Alerts</span>
           </div>
-          <h2 className="text-2xl font-black text-slate-900 dark:text-slate-100">
+          <h2 className="text-2xl font-black text-slate-900 dark:text-slate-100 flex items-center gap-3">
             {greeting}, Disaster Officer
+            <span className="text-[10px] bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800 tracking-wide font-mono">
+              Ensemble Source: NOAA GEFS Seamless (31-member)
+            </span>
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Pan-India weather downscaling and extreme event activity snapshot — {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
