@@ -46,27 +46,30 @@ class RealERA5ClimatologyEngine:
         ]
 
         station_precip_series = []
+        # Chunking to avoid API limits (1994-2009 and 2010-2024)
+        time_chunks = [("1994-01-01", "2009-12-31"), ("2010-01-01", "2024-12-31")]
+        
         for lat, lon, name in stations:
-            url = (
-                f"https://archive-api.open-meteo.com/v1/archive?"
-                f"latitude={lat}&longitude={lon}&"
-                f"start_date=2020-06-01&end_date=2023-09-30&"
-                f"hourly=precipitation"
-            )
-            try:
-                req = urllib.request.Request(url, headers={'User-Agent': 'StormTrace-RealClimatology/3.0'})
-                with urllib.request.urlopen(req, timeout=6) as resp:
-                    res = json.loads(resp.read().decode())
-                    precip_vals = res.get("hourly", {}).get("precipitation", [])
-                    station_precip_series.extend(precip_vals)
-                    print(f"   -> Station {name} ({lat}, {lon}): loaded {len(precip_vals)} ERA5 hourly precip values")
-            except Exception as e:
-                print(f"   -> Station {name} fetch note: {e}")
+            for start_d, end_d in time_chunks:
+                url = (
+                    f"https://archive-api.open-meteo.com/v1/archive?"
+                    f"latitude={lat}&longitude={lon}&"
+                    f"start_date={start_d}&end_date={end_d}&"
+                    f"daily=precipitation_sum&timezone=UTC"
+                )
+                try:
+                    req = urllib.request.Request(url, headers={'User-Agent': 'StormTrace-RealClimatology/3.0'})
+                    with urllib.request.urlopen(req, timeout=10) as resp:
+                        res = json.loads(resp.read().decode())
+                        precip_vals = res.get("daily", {}).get("precipitation_sum", [])
+                        valid_vals = [v for v in precip_vals if v is not None]
+                        station_precip_series.extend(valid_vals)
+                        print(f"   -> Station {name} ({lat}, {lon}) [{start_d} to {end_d}]: loaded {len(valid_vals)} ERA5 daily precip values")
+                except Exception as e:
+                    print(f"   -> Station {name} fetch note: {e}")
 
-        if len(station_precip_series) < 100:
-            # High-precision ERA5 calibrated distribution derived from IMD 30-year monsoon grid dataset
-            np.random.seed(1994)
-            station_precip_series = np.random.gamma(shape=2.3, scale=15.8, size=self.total_samples)
+        if len(station_precip_series) < 10950: # 30 years * 365 days
+            raise ValueError(f"Insufficient real climatology data: {len(station_precip_series)} samples. Minimum 10,950 required for 30-year baseline.")
 
         sorted_clim = np.sort(np.array(station_precip_series, dtype=np.float64))
         p50 = float(np.percentile(sorted_clim, 50))
@@ -123,6 +126,34 @@ class RealERA5ClimatologyEngine:
         Alias for fetch_real_era5_climatology for pipeline compatibility.
         """
         return self.fetch_real_era5_climatology(lat_points, lon_points)
+
+    def compute_lalaurette_efi(self, forecast_ensemble: np.ndarray, climatology_samples: np.ndarray) -> float:
+        """
+        Computes the Lalaurette (2003) Extreme Forecast Index (EFI) integral.
+        EFI = (2/pi) * int_0^1 (p - F_f(p)) / sqrt(p * (1-p)) dp
+        """
+        clim_sorted = np.sort(climatology_samples)
+        num_clim = len(clim_sorted)
+        if num_clim == 0:
+            return 0.0
+
+        p_vals = np.linspace(0.01, 0.99, 99)
+        efi_integral = 0.0
+        dp = p_vals[1] - p_vals[0]
+
+        for p in p_vals:
+            # Find the value at quantile p in climatology
+            clim_val = np.percentile(clim_sorted, p * 100)
+            
+            # Forecast CDF F_f(p) is the proportion of ensemble members <= clim_val
+            f_f_p = np.mean(forecast_ensemble <= clim_val)
+            
+            # Lalaurette integrand
+            integrand = (p - f_f_p) / np.sqrt(p * (1 - p))
+            efi_integral += integrand * dp
+            
+        efi = (2.0 / np.pi) * efi_integral
+        return float(efi)
 
 # Backward compatibility alias
 ClimatologyEngine = RealERA5ClimatologyEngine
