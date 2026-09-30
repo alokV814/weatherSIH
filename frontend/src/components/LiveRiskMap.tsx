@@ -299,7 +299,7 @@ export const LiveRiskMap: React.FC<LiveRiskMapProps> = ({ selectedRegion = 'all'
   const [currentRegion, setCurrentRegion] = useState<IndiaRegionId>(selectedRegion);
   const [selectedTimeStep, setSelectedTimeStep] = useState<number>(12);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [layerOpacity, setLayerOpacity] = useState<number>(0.80);
+  const [layerOpacity, setLayerOpacity] = useState<number>(0.95);
   const [riskGrid, setRiskGrid] = useState<GridCell5km[]>([]);
   const [selectedCell, setSelectedCell] = useState<GridCell5km | null>(null);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
@@ -582,8 +582,10 @@ export const LiveRiskMap: React.FC<LiveRiskMapProps> = ({ selectedRegion = 'all'
         type: 'raster',
         source: 'rain-radar-source',
         paint: {
-          'raster-opacity': layerOpacity * 0.75,
-          'raster-fade-duration': 300,
+          'raster-opacity': layerOpacity * 0.95,
+          'raster-contrast': 0.25,
+          'raster-saturation': 0.35,
+          'raster-fade-duration': 100,
         },
       });
 
@@ -1323,7 +1325,7 @@ export const LiveRiskMap: React.FC<LiveRiskMapProps> = ({ selectedRegion = 'all'
     if (!map || !map.isStyleLoaded()) return;
 
     const opacityUpdates: [string, string, number][] = [
-      ['rain-radar-layer', 'raster-opacity', layerOpacity * 0.75],
+      ['rain-radar-layer', 'raster-opacity', layerOpacity * 0.95],
       ['rain-isohyets-fill', 'fill-opacity', layerOpacity * 0.45],
       ['rain-anomaly-fill', 'fill-opacity', layerOpacity * 0.35],
       ['risk-grid-3d', 'fill-extrusion-opacity', layerOpacity * 0.5],
