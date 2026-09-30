@@ -3,13 +3,12 @@ services:
     name: stormtrace-backend
     env: python
     buildCommand: "cd backend && pip install -r requirements.txt"
-    startCommand: "cd backend && uvicorn backend.api.main:app --host 0.0.0.0 --port 10000"
+    startCommand: "cd backend && uvicorn backend.api.main:app --host 0.0.0.0 --port $PORT"
     envVars:
       - key: PYTHON_VERSION
-        value: 3.10.0
+        value: 3.11.0
       - key: OWM_KEY
-        value: "" # Add in dashboard
+        sync: false
       - key: MAPBOX_TOKEN
-        value: "" # Add in dashboard
-      - key: PORT
-        value: "10000"
+        sync: false
+
