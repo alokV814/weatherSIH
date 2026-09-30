@@ -422,23 +422,21 @@ python backend/models/inspector.py
 
 ## 🚀 11. Running & Deploying the Project
 
-### 1. Frontend Setup (React 19 + Vite)
-```bash
-# Install Node dependencies
-npm install
+### 1. Local Development (Unified Startup)
+To launch both the FastAPI backend and the React frontend simultaneously, use the provided startup scripts from the root directory:
 
-# Run Vite local development server
-npm run dev
+**For Windows:**
+```cmd
+start_stormtrace.bat
 ```
 
-### 2. Backend Setup (FastAPI + PyTorch)
+**For Linux/Mac (Bash):**
 ```bash
-# Install Python dependencies
-pip install -r backend/requirements.txt
-
-# Run FastAPI backend server
-uvicorn backend.api.main:app --reload --port 8000
+chmod +x start_stormtrace.sh
+./start_stormtrace.sh
 ```
+
+These scripts will automatically start the backend on port 8000 and the frontend on port 5173.
 
 ### 3. Production Deployment Architecture
 - **Vercel Frontend**: Deployed live at [`https://wheather-sih.vercel.app/`](https://wheather-sih.vercel.app/). Automatically proxies API calls (`/api/*`) via Vercel rewrites directly to the Render backend.
